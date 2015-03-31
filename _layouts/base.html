@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ site.title }}</title>
+  <link rel="icon" type="img/png" href="/assets/img/favicon.png">
+  <link rel="stylesheet" type="text/css" href="/assets/css/layout.css">
+  <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+  {% if page.assets.css %}
+      {% for filename in page.assets.css %}
+          <link rel="stylesheet" href="{{ filename }}" type="text/css" />
+      {% endfor %}
+  {% endif %}
+  {% if page.assets.js %}
+      {% for filename in page.assets.js %}
+          <script type="text/javascript" src="{{ filename }}"></script>
+      {% endfor %}
+  {% endif %}
+</head>
+<body>
+  <a href="https://github.com/digicoop/otalk" id="forkme"></a>
+  {{ content }}
+  <div id="footer">
+    <div class="container">
+      <p>Made with ❤ by <a href="http://digicoop.io">Digicoop</a></p>
+      <p><a href="https://github.com/digicoop/otalk">digicoop/otalk</a> is a fork of <a href="https://github.com/otalk/otalk-deprecated">otalk/otalk-deprecated</a> made by <a href="http://andyet.com">&amp;yet</a></p>
+    </div>
+  </div>
+</body>
+</html>

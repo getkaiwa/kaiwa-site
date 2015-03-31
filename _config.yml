@@ -1,0 +1,3 @@
+title: Otalk
+url: http://localhost:4000
+auth_server: http://localhost:5000

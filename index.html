@@ -1,0 +1,204 @@
+---
+layout: base
+assets:
+  css:
+    - /assets/css/home.css
+---
+<div id="colorbar"></div>
+<div id="header" class="container">
+  <h1><a href="/">Otalk</a></h1>
+  <h2>A modern and Open Source web client for XMPP</h2>
+  <img src="/assets/img/header.png" alt="Screenshot">
+  <div class="intro">
+    <div class="actions">
+      <a href="{{site.auth_server}}/oauth/start" class="deploy">
+        Deploy on DigitalOcean &raquo;
+      </a>
+      <a href="https://github.com/digicoop/otalk">
+        View on Github
+      </a>
+    </div>
+    <p>
+      Inspired by the best, built for XMPP, Otalk is a beautiful
+      web-based client for the only standardized chat protocol.
+    </p>
+    <p>
+      Combined with <a href="https://prosody.im/">Prosody</a>, one of
+      the best XMPP server out there, Otalk provides an unparalleled
+      XMPP experience, on par with well known commercial alternatives.
+    </p>
+  </div>
+</div>
+<div id="features" class="container">
+  <h3>Everything you expect from a chat application</h3>
+  <ul class="clearfix">
+    <li>
+      <strong>Rooms</strong>
+      <p>
+        Create rooms to chat on a defined topic. Rooms are automatically created
+        as permanent.
+      </p>
+    </li>
+    <li>
+      <strong>Private Messages</strong>
+      <p>
+        Users can chat privately between them and manage their own contact list.
+      </p>
+    </li>
+    <li>
+      <strong>Archives</strong>
+      <p>
+        Using Message Archive Management (XEP-0313), your conversations
+        will be archived on the server.
+      </p>
+    </li>
+    <li>
+      <strong>User Management</strong>
+      <p>
+        When using LDAP, manage your users directly through Otalk. Users can
+        update their own information.
+      </p>
+    </li>
+    <li>
+      <strong>Multiple Clients</strong>
+      <p>
+        Use any XMPP clients to connect to a well-tuned Prosody server.
+        <a href="#clients">Check out our recommended list of clients</a>.
+      </p>
+    </li>
+    <li>
+      <strong>Chat Syncing</strong>
+      <p>
+        Using Message Carbons (XEP-0280) all of your active
+        conversations will be synced to your Otalk client.
+      </p>
+    </li>
+    <li>
+      <strong>Avatars</strong>
+      <p>
+        Support for user avatars across rooms and private conversations.
+      </p>
+    </li>
+    <li>
+      <strong>Notifications</strong>
+      <p>
+        Sound and desktop notifications are provided out of the box
+      </p>
+    </li>
+    <li>
+      <strong>Mentions</strong>
+      <p>
+        Support for user mentions using @username as well as mentioning everybody
+        using @all.
+      </p>
+    </li>
+    <li>
+      <strong>OEmbed</strong>
+      <p>
+        Images, videos and sounds from many websites (like Youtube, Imgur, ...) will
+        be embedded in the chat.
+      </p>
+    </li>
+    <li>
+      <strong>Reliable Connections</strong>
+      <p>
+        Send confirmation and auto-reconnection using Stream Management (XEP-0198).
+      </p>
+    </li>
+  </ul>
+</div>
+<div id="screenshots" class="container">
+  <a href="/assets/img/screen1.png"><img src="/assets/img/screen1.png" alt=""></a>
+  <a href="/assets/img/screen2.png"><img src="/assets/img/screen2.png" alt=""></a>
+</div>
+<div id="myths" class="container">
+  <h3>Debunking some XMPP myths</h3>
+  <p>
+    XMPP has come a long way in the last few years and is catching up with
+    more recent commercial offerings. Some of the most common grieving against
+    XMPP have been solved through extensions to the protocol called XEPs.
+    Unfortunately, most clients do not support the most recent updates. Otalk
+    implements them to offer you the same experience you got accustomed to
+    using closed systems.
+  </p>
+</div>
+<div id="package" class="container">
+  <h3>A complete package to setup your own private chat system</h3>
+  <p>
+    We provide <a href="#">Docker images</a> as well as a
+    <a href="#">Docker Composer</a> file to deploy all
+    the needed services in a matter of minutes. Use our
+    <a href="#">online deployment tool</a> to setup a DigitalOcean
+    droplet or follow the instructions in the <a href="https://github.com/digicoop/otalk/blob/master/README.md">README</a>
+    to install it on your own server.
+  </p>
+  <div class="services clearfix">
+    <div class="service">
+      <strong>Prosody</strong>
+      Compatible with the latest XMPP specs and backed by
+      PostgreSQL.
+    </div>
+    <div class="plus">+</div>
+    <div class="service">
+      <strong>LDAP</strong>
+      Manage users through LDAP which is
+      compatible with many other services
+    </div>
+    <div class="plus">+</div>
+    <div class="service">
+      <strong>Otalk</strong>
+      Our beautiful web client for XMPP.
+      Works best with Prosody.
+    </div>
+  </div>
+  <p>
+    Each Docker image is customizable and you can replace any components
+    by your own. For example, it's trivial to use your already installed
+    OpenLDAP and/or PostgreSQL instances.
+  </p>
+</div>
+<div id="clients" class="container">
+  <h3>Recommended non-web XMPP clients</h3>
+  <p>
+    Using our setup, you'll get a well-tuned and up to date Prosody instance
+    implementing the latest XMPP specs. Not all clients have implemented
+    them so we made a selection for you:
+  </p>
+  <ul class="clearfix">
+    <li>
+      <img src="/assets/img/conversations.png" alt="">
+      <a href="https://play.google.com/store/apps/details?id=eu.siacs.conversations&hl=en">Conversations for Android</a>
+      <p>
+        If you're an Android user, you're in luck! Conversations is a great
+        Open Source client with support for many XMPP features, notably
+        chat syncing.
+      </p>
+    </li>
+    <li>
+      <img src="/assets/img/monal.png" alt="">
+      <a href="http://monal.im/">Monal for iOS</a>
+      <p>
+        Unfortunately, the XMPP landscape on iOS is pretty bad. Monal is the
+        only client still maintained and usable although it's still lacking.
+        No support for chat syncing or message history. However, Monal is
+        Open Source!
+      </p>
+    </li>
+    <li>
+      <img src="/assets/img/pidgin.jpg" alt="">
+      <a href="https://www.pidgin.im/">Pidgin for Linux &amp; Windows</a>
+      <p>
+        The venerable multi-protocol and multi-platform chat client is still
+        the best out there when it comes to XMPP.
+      </p>
+    </li>
+    <li>
+      <img src="/assets/img/adium.png" alt="">
+      <a href="https://adium.im/">Adium for Mac OS</a>
+      <p>
+        Built using the same core as Pidgin, it is its native Mac OS
+        counterpart.
+      </p>
+    </li>
+  </ul>
+</div>
