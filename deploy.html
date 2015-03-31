@@ -6,3 +6,15 @@ assets:
   js:
     - /assets/js/deploy.js
 ---
+<div id="xmppInfos">
+    <label for="org">Organisation</label><input type="text" value="Digicoop" id="org" name= "org" />
+    <br />
+    <label for="domain">Domain</label><input type="text" value="intra.digicoop.io" id="domain" name= "domain" />
+    <br />
+    <label for="name">Name</label><input type="text" value="Seb" id="name" name= "name" />
+    <br />
+    <label for="password">Password</label><input type="password" value="password" id="password" name= "password" />
+    <br />
+    <label for="keys">SSH Keys</label><ul id="keys"></ul>
+    <input type="button" value="Create Droplet" onclick="createDroplet();" />
+</div>
