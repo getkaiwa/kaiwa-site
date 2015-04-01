@@ -18,6 +18,20 @@ String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 }
 
+function displayCreating(name) {
+    document.getElementById('xmppInfos').innerHTML = "<h1>Droplet " + name + " is being created</h1>";
+}
+
+function displaySuccess(name, ip) {
+    document.getElementById('xmppInfos').innerHTML = "<h1>Droplet " + name + " created !</h1>"
+    + "Otalk will be available in about 15 minutes on <a href='http://" + ip + ":8000'>http://" + ip + ":8000</a>";
+}
+
+function displayError(name, email) {
+    document.getElementById('xmppInfos').innerHTML = "<h1>Error when creating the droplet " + name + " :(</h1>"
+    + "Please contact us on <a href='mailto:" + email + "'>" + email + "</a>";
+}
+
 function getSSHKeys(token, callback) {
     $.ajax({
         type: "GET",
@@ -59,6 +73,24 @@ function addSSHKey(token, name, key, callback) {
 function selectSSHKey(key) {
     sshKey = key;
     return false;
+}
+
+function getDropletIp(id, callback) {
+    $.ajax({
+        type: "GET",
+        url: apiDroplets+ '/' + id,
+        headers: {
+            "Content-Type": 'application/json',
+            "Authorization": 'Bearer ' + token
+        },
+        success: function (res) {
+            var networks = res.droplet.networks;
+            callback(null, networks.v4 && networks.v4.length ? networks.v4[0].ip_address : null);
+        },
+        error: function (err) {
+            callback(err);
+        }
+    });
 }
 
 function createDroplet() {
@@ -106,19 +138,34 @@ runcmd:
 - docker build -t prosody /opt/apps/prosody/Docker
 - docker run -d -p 5222:5222 -p 5269:5269 -p 5280:5280 -p 5281:5281 -p 3478:3478/udp --name prosody --link postgres:postgres --link ldap:ldap -e XMPP_DOMAIN=` + domain + ` -e DB_NAME=docker -e DB_USER=dbuser -e DB_PWD=` + password + ` -e LDAP_BASE=dc=` + org + ` -e LDAP_DN=cn=admin,dc=` + org + ` -e LDAP_PWD=` + password + ` -e LDAP_GROUP=` + org + ` prosody
 - ldapadd -h localhost -x -D cn=admin,dc=` + org + ` -w ` + password + ` -f /opt/apps/prosody/users.ldif
-- rm -r opt/apps/prosody
 - git clone git://github.com/digicoop/otalk.git /opt/apps/otalk
 - docker build -t otalk /opt/apps/otalk/Docker
 - docker run -d -p 8000:8000 --name otalk --link ldap:ldap -e VIRTUAL_HOST=localhost -e VIRTUAL_PORT=8000 -e XMPP_NAME=` + org.capitalize() + ` -e XMPP_DOMAIN=` + domain + ` -e XMPP_WSS=ws://` + domain + `:5280/xmpp-websocket -e XMPP_MUC=chat.` + domain + ` -e XMPP_STARTUP=groupchat/home%40chat.` + domain + ` -e XMPP_ADMIN=admin -e LDAP_BASE=dc=` + org + ` -e LDAP_DN=cn=admin,dc=` + org + ` -e LDAP_PWD=` + password + ` -e LDAP_GROUP=` + org + ` otalk
-- rm -r opt/apps/otalk
 `
         }),
         success: function (res) {
-            console.log("Droplet created");
-            document.getElementById('xmppInfos').innerHTML = "<h1>Droplet " + res.droplet.name + " created !</h1>";
+            var dropletName = res.droplet.name;
+            var dropletId = res.droplet.id;
+            displayCreating(dropletName);
+
+            var checkIp = function (err, dropletIp) {
+                if (err) {
+                    displayError(dropletName, "contact@otalk.io");
+                    return;
+                }
+
+                if (!dropletIp) {
+                    setTimeout(getDropletIp, 2000, dropletId, checkIp);
+                    return;
+                }
+                displaySuccess(dropletName, dropletIp);
+            };
+            getDropletIp(dropletId, checkIp);
+
         },
         error: function (err) {
             if (err) console.log(err);
+            displayError("Otalk", "contact@otalk.io");
         }
     });
 
