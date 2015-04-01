@@ -106,6 +106,11 @@ runcmd:
 - docker build -t prosody /opt/apps/prosody/Docker
 - docker run -d -p 5222:5222 -p 5269:5269 -p 5280:5280 -p 5281:5281 -p 3478:3478/udp --name prosody --link postgres:postgres --link ldap:ldap -e XMPP_DOMAIN=` + domain + ` -e DB_NAME=docker -e DB_USER=dbuser -e DB_PWD=` + password + ` -e LDAP_BASE=dc=` + org + ` -e LDAP_DN=cn=admin,dc=` + org + ` -e LDAP_PWD=` + password + ` -e LDAP_GROUP=` + org + ` prosody
 - ldapadd -h localhost -x -D cn=admin,dc=` + org + ` -w ` + password + ` -f /opt/apps/prosody/users.ldif
+- rm -r opt/apps/prosody
+- git clone git://github.com/digicoop/otalk.git /opt/apps/otalk
+- docker build -t otalk /opt/apps/otalk/Docker
+- docker run -d -p 8000:8000 --name otalk --link ldap:ldap -e VIRTUAL_HOST=localhost -e VIRTUAL_PORT=8000 -e XMPP_NAME=` + org.capitalize() + ` -e XMPP_DOMAIN=` + domain + ` -e XMPP_WSS=ws://` + domain + `:5280/xmpp-websocket -e XMPP_MUC=chat.` + domain + ` -e XMPP_STARTUP=groupchat/home%40chat.` + domain + ` -e XMPP_ADMIN=admin -e LDAP_BASE=dc=` + org + ` -e LDAP_DN=cn=admin,dc=` + org + ` -e LDAP_PWD=` + password + ` -e LDAP_GROUP=` + org + ` otalk
+- rm -r opt/apps/otalk
 `
         }),
         success: function (res) {
