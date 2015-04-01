@@ -46,30 +46,29 @@ var DropletCreator = function(client) {
 };
 
 DropletCreator.prototype.generateCloudConfig = function(data) {
-  return "#cloud-config" +
-    "packages:" +
-    "- git" +
-    "- docker.io" +
-    "- ldap-utils" +
-    "runcmd:" +
-    "- docker pull orchardup/postgresql" +
-    "- docker pull nickstenning/slapd" +
-    "- docker run -d --name postgres -p 5432:5432 -e POSTGRESQL_USER=otalk -e POSTGRESQL_PASS=" + data.adminPassword + " orchardup/postgresql" +
-    "- docker run -d --name ldap -p 389:389 -e LDAP_DOMAIN=" + data.org.toLowerCase() + " -e LDAP_ORGANISATION=" + data.org + " -e LDAP_ROOTPASS=" + data.adminPassword + " nickstenning/slapd" +
-    "- git clone git://github.com/digicoop/otalk-prosody.git /opt/apps/prosody" +
-    "- sed 's/admin@example.com/admin@" + data.domain + "/' -i /opt/apps/prosody/users.ldif" +
-    "- sed 's/user1@example.com/" + data.firstUserName + "@" + data.domain + "/' -i /opt/apps/prosody/users.ldif" +
-    "- sed 's/adminpass/" + data.adminPassword + "/' -i /opt/apps/prosody/users.ldif" +
-    "- sed 's/user1pass/" + data.adminPassword + "/' -i /opt/apps/prosody/users.ldif" +
-    "- sed 's/example.com/" + data.org.toLowerCase() + "/' -i /opt/apps/prosody/users.ldif" +
-    "- sed 's/ExampleDesc/" + data.org + "/' -i /opt/apps/prosody/users.ldif" +
-    "- sed 's/user1/" + data.firstUserName + "/' -i /opt/apps/prosody/users.ldif" +
-    "- docker build -t prosody /opt/apps/prosody/Docker" +
-    "- docker run -d -p 5222:5222 -p 5269:5269 -p 5280:5280 -p 5281:5281 -p 3478:3478/udp --name prosody --link postgres:postgres --link ldap:ldap -e XMPP_DOMAIN=" + data.domain + " -e DB_NAME=otalk -e DB_USER=otalk -e DB_PWD=" + data.adminPassword + " -e LDAP_BASE=dc=" + data.org.toLowerCase() + " -e LDAP_DN=cn=admin,dc=" + data.org.toLowerCase() + " -e LDAP_PWD=" + data.adminPassword + " -e LDAP_GROUP=" + data.org.toLowerCase() + " prosody" +
-    "- ldapadd -h localhost -x -D cn=admin,dc=" + data.org.toLowerCase() + " -w " + data.adminPassword + " -f /opt/apps/prosody/users.ldif" +
-    "- git clone git://github.com/digicoop/otalk.git /opt/apps/otalk" +
-    "- docker build -t otalk /opt/apps/otalk/Docker" +
-    "- docker run -d -p 8000:8000 --name otalk --link ldap:ldap -e VIRTUAL_HOST=localhost -e VIRTUAL_PORT=8000 -e XMPP_NAME=" + data.org + " -e XMPP_DOMAIN=" + data.domain + " -e XMPP_WSS=ws://" + data.domain + ":5280/xmpp-websocket -e XMPP_MUC=chat." + data.domain + " -e XMPP_STARTUP=groupchat/home%40chat." + data.domain + " -e XMPP_ADMIN=admin -e LDAP_BASE=dc=" + data.org.toLowerCase() + " -e LDAP_DN=cn=admin,dc=" + data.org.toLowerCase() + " -e LDAP_PWD=" + data.adminPassword + " -e LDAP_GROUP=" + data.org.toLowerCase() + " otalk";
+  return `#cloud-config
+packages:
+  - git
+  - docker.io
+  - ldap-utils
+runcmd:
+  - docker pull orchardup/postgresql
+  - docker run -d --name postgres -p 5432:5432 -e POSTGRESQL_USER=otalk -e POSTGRESQL_PASS=` + data.adminPassword + ` orchardup/postgresql
+  - docker pull nickstenning/slapd
+  - docker run -d --name ldap -p 389:389 -e LDAP_DOMAIN=` + data.org.toLowerCase() + ` -e LDAP_ORGANISATION=` + data.org + ` -e LDAP_ROOTPASS=` + data.adminPassword + ` nickstenning/slapd
+  - wget -P /root/ https://raw.githubusercontent.com/digicoop/otalk-prosody/master/users.ldif
+  - sed 's/admin@example.com/admin@` + data.domain + `/' -i /root/users.ldif
+  - sed 's/user1@example.com/` + data.firstUserName.toLowerCase() + `@` + data.domain + `/' -i /root/users.ldif
+  - sed 's/adminpass/` + data.adminPassword + `/' -i /root/users.ldif
+  - sed 's/user1pass/` + data.firstUserPassword + `/' -i /root/users.ldif
+  - sed 's/example.com/` + data.org.toLowerCase() + `/' -i /root/users.ldif
+  - sed 's/ExampleDesc/` + data.org + `/' -i /root/users.ldif
+  - sed 's/user1/` + data.firstUserName.toLowerCase() + `/' -i /root/users.ldif
+  - docker pull sebu77/otalk-prosody
+  - docker run -d -p 5222:5222 -p 5269:5269 -p 5280:5280 -p 5281:5281 -p 3478:3478/udp --name prosody --link postgres:postgres --link ldap:ldap -e XMPP_DOMAIN=` + data.domain + ` -e DB_NAME=otalk -e DB_USER=otalk -e DB_PWD=` + data.adminPassword + ` -e LDAP_BASE=dc=` + data.org.toLowerCase() + ` -e LDAP_DN=cn=admin,dc=` + data.org.toLowerCase() + ` -e LDAP_PWD=` + data.adminPassword + ` -e LDAP_GROUP=` + data.org.toLowerCase() + ` sebu77/otalk-prosody
+  - ldapadd -h localhost -x -D cn=admin,dc=` + data.org.toLowerCase() + ` -w ` + data.adminPassword + ` -f /root/users.ldif
+  - docker pull sebu77/otalk
+  - docker run -d -p 80:8000 --name otalk --link ldap:ldap -e VIRTUAL_HOST=localhost -e VIRTUAL_PORT=80 -e XMPP_NAME=` + data.org + ` -e XMPP_DOMAIN=` + data.domain + ` -e XMPP_WSS=ws://` + data.domain + `:5280/xmpp-websocket -e XMPP_MUC=chat.` + data.domain + ` -e XMPP_STARTUP=groupchat/home%40chat.` + data.domain + ` -e XMPP_ADMIN=admin -e LDAP_BASE=dc=` + data.org.toLowerCase() + ` -e LDAP_DN=cn=admin,dc=` + data.org.toLowerCase() + ` -e LDAP_PWD=` + data.adminPassword + ` -e LDAP_GROUP=` + data.org.toLowerCase() + ` sebu77/otalk`;
 };
 
 DropletCreator.prototype.create = function(data, callback) {
