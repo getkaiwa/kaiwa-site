@@ -114,6 +114,7 @@ $(function() {
     } else {
       main.css('visibility', 'hidden');
       status.show().attr('class', className).find('.message').html(message);
+      $(window).scrollTop(0);
     }
   };
 
