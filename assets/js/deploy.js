@@ -1,197 +1,82 @@
-var apiUrl = 'https://api.digitalocean.com/v2';
-var apiKeys = apiUrl + '/account/keys';
-var apiDroplets = apiUrl + '/droplets';
-var token = null;
-var sshKey = null;
-
-function getQueryStringParam(name) {
-    var queryParams = window.location.hash.substring(1).split('&');
-    for (var i = 0; i < queryParams.length; i++) {
-        var param = queryParams[i].split('=');
-        if (param[0] === name) {
-            return param[1];
-        }
-    }
-}
-
-String.prototype.capitalize = function() {
-    return this.charAt(0).toUpperCase() + this.slice(1);
-}
-
-function displayCreating(name) {
-    document.getElementById('xmppInfos').innerHTML = "<h1>Droplet " + name + " is being created</h1>";
-}
-
-function displaySuccess(name, ip) {
-    document.getElementById('xmppInfos').innerHTML = "<h1>Droplet " + name + " created !</h1>"
-    + "Otalk will be available in about 15 minutes on <a href='http://" + ip + ":8000'>http://" + ip + ":8000</a>";
-}
-
-function displayError(name, email) {
-    document.getElementById('xmppInfos').innerHTML = "<h1>Error when creating the droplet " + name + " :(</h1>"
-    + "Please contact us on <a href='mailto:" + email + "'>" + email + "</a>";
-}
-
-function getSSHKeys(token, callback) {
-    $.ajax({
-        type: "GET",
-        url: apiKeys,
-        headers: {
-          "Content-Type": 'application/json',
-          "Authorization": 'Bearer ' + token
-        },
-        success: function (res) {
-            callback(null, res);
-        },
-        error: function (err) {
-            callback(err);
-        }
-    });
-}
-
-function addSSHKey(token, name, key, callback) {
-    $.ajax({
-        type: "POST",
-        url: apiKeys,
-        headers: {
-            "Content-Type": 'application/json',
-            "Authorization": 'Bearer ' + token
-        },
-        data: JSON.stringify({
-            "name": name,
-            "public_key": key
-        }),
-        success: function (res) {
-            callback(null, res);
-        },
-        error: function (err) {
-            callback(err);
-        }
-    });
-}
-
-function selectSSHKey(key) {
-    sshKey = key;
-    return false;
-}
-
-function getDropletIp(id, callback) {
-    $.ajax({
-        type: "GET",
-        url: apiDroplets+ '/' + id,
-        headers: {
-            "Content-Type": 'application/json',
-            "Authorization": 'Bearer ' + token
-        },
-        success: function (res) {
-            var networks = res.droplet.networks;
-            callback(null, networks.v4 && networks.v4.length ? networks.v4[0].ip_address : null);
-        },
-        error: function (err) {
-            callback(err);
-        }
-    });
-}
-
-function createDroplet() {
-
-    var org = document.getElementById('org').value.toLowerCase();
-    var domain = document.getElementById('domain').value.toLowerCase();
-    var name = document.getElementById('name').value.toLowerCase();
-    var password = document.getElementById('password').value;
-
-    $.ajax({
-        type: "POST",
-        url: apiDroplets,
-        headers: {
-            "Content-Type": 'application/json',
-            "Authorization": 'Bearer ' + token
-        },
-        data: JSON.stringify({
-            name: "Otalk",
-            region: "nyc3",
-            size: "1gb",
-            image: "ubuntu-14-04-x64",
-            ssh_keys: sshKey ? [ sshKey ] : null,
-            backups: false,
-            ipv6: false,
-            private_networking: null,
-            user_data: `
-#cloud-config
-packages:
-- git
-- docker.io
-- ldap-utils
-runcmd:
-- docker pull orchardup/postgresql
-- docker pull nickstenning/slapd
-- docker run -d --name postgres -p 5432:5432 -e POSTGRESQL_USER=dbuser -e POSTGRESQL_PASS=` + password + ` orchardup/postgresql
-- docker run -d --name ldap -p 389:389 -e LDAP_DOMAIN=` + org + ` -e LDAP_ORGANISATION=` + org.capitalize() + ` -e LDAP_ROOTPASS=` + password + ` nickstenning/slapd
-- git clone git://github.com/digicoop/otalk-prosody.git /opt/apps/prosody
-- sed 's/admin@example.com/admin@` + domain + `/' -i /opt/apps/prosody/users.ldif
-- sed 's/user1@example.com/` + name + `@` + domain + `/' -i /opt/apps/prosody/users.ldif
-- sed 's/adminpass/` + password + `/' -i /opt/apps/prosody/users.ldif
-- sed 's/user1pass/` + password + `/' -i /opt/apps/prosody/users.ldif
-- sed 's/example.com/` + org + `/' -i /opt/apps/prosody/users.ldif
-- sed 's/ExampleDesc/` + org.capitalize() + `/' -i /opt/apps/prosody/users.ldif
-- sed 's/user1/` + name + `/' -i /opt/apps/prosody/users.ldif
-- docker build -t prosody /opt/apps/prosody/Docker
-- docker run -d -p 5222:5222 -p 5269:5269 -p 5280:5280 -p 5281:5281 -p 3478:3478/udp --name prosody --link postgres:postgres --link ldap:ldap -e XMPP_DOMAIN=` + domain + ` -e DB_NAME=docker -e DB_USER=dbuser -e DB_PWD=` + password + ` -e LDAP_BASE=dc=` + org + ` -e LDAP_DN=cn=admin,dc=` + org + ` -e LDAP_PWD=` + password + ` -e LDAP_GROUP=` + org + ` prosody
-- ldapadd -h localhost -x -D cn=admin,dc=` + org + ` -w ` + password + ` -f /opt/apps/prosody/users.ldif
-- git clone git://github.com/digicoop/otalk.git /opt/apps/otalk
-- docker build -t otalk /opt/apps/otalk/Docker
-- docker run -d -p 8000:8000 --name otalk --link ldap:ldap -e VIRTUAL_HOST=localhost -e VIRTUAL_PORT=8000 -e XMPP_NAME=` + org.capitalize() + ` -e XMPP_DOMAIN=` + domain + ` -e XMPP_WSS=ws://` + domain + `:5280/xmpp-websocket -e XMPP_MUC=chat.` + domain + ` -e XMPP_STARTUP=groupchat/home%40chat.` + domain + ` -e XMPP_ADMIN=admin -e LDAP_BASE=dc=` + org + ` -e LDAP_DN=cn=admin,dc=` + org + ` -e LDAP_PWD=` + password + ` -e LDAP_GROUP=` + org + ` otalk
-`
-        }),
-        success: function (res) {
-            var dropletName = res.droplet.name;
-            var dropletId = res.droplet.id;
-            displayCreating(dropletName);
-
-            var checkIp = function (err, dropletIp) {
-                if (err) {
-                    displayError(dropletName, "contact@otalk.io");
-                    return;
-                }
-
-                if (!dropletIp) {
-                    setTimeout(getDropletIp, 2000, dropletId, checkIp);
-                    return;
-                }
-                displaySuccess(dropletName, dropletIp);
-            };
-            getDropletIp(dropletId, checkIp);
-
-        },
-        error: function (err) {
-            if (err) console.log(err);
-            displayError("Otalk", "contact@otalk.io");
-        }
-    });
-
-    return false;
-}
 
 $(function() {
+  var client = new DigitalOceanClient(getQueryStringParam('token'));
+  var dropletCreator = new DropletCreator(client);
+  var form = $('#dropletForm');
+  var status = $('#status');
 
-  token = getQueryStringParam('token');
-  window.history.pushState(null, "", window.location.origin + window.location.pathname);
+  var updateStatus = function(className, message) {
+    form.hide();
+    status.show().attr('class', className).find('.message').html(message);
+  };
 
-  getSSHKeys(token, function(err, res) {
-      if (err) {
-          console.log(err);
-          return;
-      }
-      var list = document.getElementById("keys");
-      res.ssh_keys.forEach(function (key) {
-          var newItem = document.createElement("li");
-          var textnode = document.createTextNode(key.name);
-          newItem.appendChild(textnode);
-          newItem.onclick = function() { selectSSHKey(key.fingerprint); this.style.backgroundColor = "#FF0000"; };
-          list.appendChild(newItem);
-      });
-      console.log(res);
+  status.find('button').click(function() {
+    status.hide();
+    form.show();
   });
 
+  var asyncCounter = 0;
+  var asyncEnd = function() {
+    if (--asyncCounter === 0) {
+      status.hide();
+      form.show();
+    }
+  };
+  $.each([
+    function(cb) {
+      client.get('/account/keys', function(err, res) {
+        var select = form.find('select[name="sshKey"]');
+        $.each(res.ssh_keys, function(i, key) {
+          select.append('<option value="' + key.id + '">' + key.name + '</option>');
+        });
+        cb();
+      });
+    },
+    function(cb) {
+      client.get('/regions', function(err, res) {
+        var select = form.find('select[name="region"]');
+        $.each(res.regions, function(i, region) {
+          if (!region.available || region.features.indexOf('metadata') === -1) return;
+          select.append('<option value="' + region.slug + '">' + region.name + '</option>');
+        });
+        cb();
+      });
+    },
+    function(cb) {
+      client.get('/sizes', function(err, res) {
+        var select = form.find('select[name="size"]');
+        $.each(res.sizes, function(i, size) {
+          var name = size.slug + ", " + size.vcpus + " CPU, " + size.disk + "GB HDD (" + size.price_monthly + "$/month)";
+          select.append('<option value="' + size.slug + '">' + name + '</option>');
+        });
+        cb();
+      });
+    }
+  ], function(i, func) {
+    asyncCounter++;
+    func(asyncEnd);
+  });
+
+  form.submit(function(e) {
+    e.preventDefault();
+    updateStatus('loading', 'Creating droplet...');
+    var data = {};
+    $.each(form.serializeArray(), function(i, field) {
+      data[field.name] = field.value === 'TRUE' ? true : field.value;
+    });
+    dropletCreator.create(data, function(err, droplet) {
+      if (err) {
+        updateStatus('error', 'Failed to create the droplet');
+        return;
+      }
+      dropletCreator.getIp(droplet.id, function(err, ip) {
+        if (err) {
+          document.location = '/success.html';
+        } else {
+          document.location = '/success.html#ip=' + ip;
+        }
+      });
+    });
+  });
 
 });
