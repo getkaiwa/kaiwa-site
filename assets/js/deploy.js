@@ -97,6 +97,16 @@ $(function() {
   var main = $('#main');
   var status = $('#status');
 
+  $('input').on({
+    keydown: function(e) {
+      if (e.which === 32)
+        return false;
+    },
+    change: function() {
+      this.value = this.value.replace(/\s/g, "");
+    }
+  });
+
   var updateStatus = function(className, message) {
     if (!className) {
       status.hide();
@@ -159,7 +169,7 @@ $(function() {
     updateStatus('loading', 'Creating droplet...');
     var data = {};
     $.each(form.serializeArray(), function(i, field) {
-      data[field.name] = field.value === 'TRUE' ? true : field.value;
+      data[field.name] = field.value === 'TRUE' ? true : field.value.replace(/\s+/g, '');
     });
     dropletCreator.create(data, function(err, droplet) {
       if (err) return updateStatus('error', 'Failed to create the droplet');
