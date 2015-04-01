@@ -33,7 +33,7 @@ def callback():
         'redirect_uri': url_for('callback', _external=True)
     })
     data = r.json()
-    return redirect(app.config['FRONT_SERVER'] + '/deploy.html#token=' + data['access_token'])
+    return redirect(app.config['FRONT_SERVER'] + '/deploy/do.html?token=' + data['access_token'])
 
 
 if __name__ == '__main__':

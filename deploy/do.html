@@ -1,0 +1,100 @@
+---
+layout: default
+title: Deploy on DigitalOcean
+assets:
+  css:
+    - /assets/css/deploy.css
+  js:
+    - /assets/js/deploy.js
+---
+<div id="status" class="loading">
+  <i class="fa fa-spinner fa-spin"></i>
+  <i class="fa fa-warning"></i>
+  <div class="message">Loading...</div>
+  <button type="button" class="btn">Retry</button>
+</div>
+<div id="main" class="clearfix">
+  <h1>Deploy your XMPP server and Otalk client on DigitalOcean</h1>
+  <div id="sidebar">
+    {% include deploy.html %}
+  </div>
+  <form id="dropletForm">
+    <div class="form-control">
+      <label for="org">Organization name:</label>
+      <input type="text" name="org" placeholder="Acme" required>
+      <p class="help">
+        <strong>Required</strong>
+        This will be used to initialize the LDAP directory.
+      </p>
+    </div>
+    <div class="form-control">
+      <label for="domain">Domain name:</label>
+      <input type="text" name="domain" placeholder="acme.com" required>
+      <p class="help">
+        <strong>Required</strong>
+        The domain name of your XMPP server. Your users' XMPP addresses
+        will be of the form <em>username@domain</em>.
+      </p>
+    </div>
+    <div class="form-control">
+      <label for="adminPassword">Admin password:</label>
+      <input type="password" name="adminPassword" required>
+      <p class="help">
+        <strong>Required</strong>
+        The admin password will be used for the PostgreSQL admin account and
+        the LDAP admin account. You can connect to the admin account on Otalk
+        (using 'admin' as username) and manage users from there.
+      </p>
+    </div>
+    <hr>
+    <div class="form-control">
+      <label for="firstUserName">Name of the first user:</label>
+      <input type="text" name="firstUserName" required>
+      <p class="help">
+        <strong>Required</strong>
+        You need at least to create one user account
+      </p>
+    </div>
+    <div class="form-control">
+      <label for="firstUserPassword">Password for the first user:</label>
+      <input type="password" name="firstUserPassword" required>
+      <p class="help">
+        <strong>Required</strong>
+      </p>
+    </div>
+    <hr>
+    <div class="form-control">
+      <label for="size">Size:</label>
+      <select name="size"></select>
+      <p class="help">
+        We recommend at least 1GB of memory to properly run Prosody<br>
+        (which should easily handle one hundred accounts).
+      </p>
+    </div>
+    <div class="form-control">
+      <label for="region">Region:</label>
+      <select name="region"></select>
+    </div>
+    <div class="form-control">
+      <label for="sshKey">SSH Key:</label>
+      <select name="sshKey">
+        <option value="">None</option>
+      </select>
+    </div>
+    <div class="form-control">
+      <label>
+        <input type="checkbox" value="TRUE" name="backups">
+        Enable backups
+      </label>
+    </div>
+    <div class="form-control">
+      <label>
+        <input type="checkbox" value="TRUE" name="ipv6">
+        Enable IPv6
+      </label>
+    </div>
+    <div class="form-buttons">
+      <button type="submit" class="btn">Create Droplet &raquo;</button>
+    </div>
+  </form>
+</div>

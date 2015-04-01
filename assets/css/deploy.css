@@ -1,9 +1,126 @@
 
-#processing {
+#predeploy img {
+  display: block;
   margin: 0 auto;
-  width: 400px;
+  margin-bottom: 20px;
+}
+#predeploy .info {
+  margin-right: -40px;
+  margin-top: 60px;
+}
+  #predeploy .info > div {
+    float: left;
+    width: 280px;
+    margin-right: 30px;
+    font-size: 16px;
+    text-align: justify;
+  }
+
+#status {
+  position: absolute;
+  left: 50%;
+  margin-left: -300px;
+  top: 300px;
+  width: 600px;
+  text-align: center;
+  display: none;
+}
+  #status .fa {
+    font-size: 60px;
+    color: #aaa;
+  }
+  #status .fa-warning {
+    display: none;
+  }
+  #status .message {
+    display: block;
+    font-size: 20px;
+    line-height: 26px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+  }
+  #status button {
+    display: none;
+  }
+  #status.error .fa-spinner {
+    display: none;
+  }
+  #status.error .fa-warning {
+    display: inline-block;
+    color: #E41F1F;
+  }
+  #status.error button {
+    display: inline-block;
+    padding: 7px 12px;
+  }
+
+h1 {
+  margin-bottom: 60px;
+  text-align: center;
+  font-size: 26px;
 }
 
+#sidebar {
+  float: right;
+  width: 300px;
+  margin-left: 30px;
+  color: #888;
+}
+  #sidebar h2 {
+    font-size: 20px;
+    margin-top: 0;
+  }
+  #sidebar p {
+    font-size: 16px;
+    line-height: 22px;
+  }
+
 #dropletForm {
+  width: 570px;
+}
+
+.form-control {
+  margin-bottom: 15px;
+}
+  .form-control label {
+    display: block;
+    font-weight: bold;
+  }
+  .form-control input[type="text"],
+  .form-control input[type="password"],
+  .form-control select {
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    padding: 5px;
+    font-size: 16px;
+    outline: none;
+    margin: 5px 0;
+    width: 300px;
+  }
+  .form-control select {
+    width: auto;
+    background: #fff;
+  }
+  .form-control input[type="text"]:focus,
+  .form-control input[type="password"]:focus,
+  .form-control select:focus {
+    box-shadow: 0 0 4px rgba(0, 0, 0, .3);
+  }
+  .form-control .help {
+    font-size: 13px;
+    color: #999;
+    margin: 0;
+  }
+
+.form-buttons {
+  margin-top: 40px;
+}
+
+hr {
+  border: 1px solid #ddd;
+  margin: 20px 0;
+}
+
+#ip {
   display: none;
 }

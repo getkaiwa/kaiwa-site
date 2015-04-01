@@ -1,0 +1,19 @@
+---
+layout: default
+title: Deploy on DigitalOcean
+assets:
+  css:
+    - /assets/css/deploy.css
+---
+<h1>Deploy your XMPP server and Otalk client on DigitalOcean</h1>
+<div id="predeploy">
+  <div class="center">
+    <img src="/assets/img/digitalocean.png" width="250" alt="">
+    <a href="{{site.auth_server}}/oauth/start" class="btn">
+      Connect with DigitalOcean &raquo;
+    </a>
+  </div>
+  <div class="info clearfix">
+    {% include deploy.html %}
+  </div>
+</div>
