@@ -1,3 +1,4 @@
 title: Kaiwa
 url: http://getkaiwa.com
 auth_server: http://auth.getkaiwa.com
+exclude: ["CNAME", "Procfile", "README.md", "oauth.py", "oauth_settings.cfg", "oauth_settings.cfg.example", "requirements.txt"]
