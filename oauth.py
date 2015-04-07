@@ -2,13 +2,9 @@ from flask import Flask, request, url_for, redirect
 import urllib
 import requests
 
-app = Flask(__name__)
 
-app.config.update({
-  "DO_CLIENT_ID": "ebf26b3760146923c419372d966ef01b3168f2b0500df9196e55fc010d3966e4",
-  "DO_CLIENT_SECRET": "7462c63aac37fd0f5c1bc0aa1b3cf7c7a409d213d357e095507e293ed71c3b43",
-  "FRONT_SERVER": "http://localhost:4000"
-})
+app = Flask(__name__)
+app.config.from_pyfile('oauth_settings.cfg')
 
 
 @app.route('/oauth/start')
@@ -33,7 +29,7 @@ def callback():
         'redirect_uri': url_for('callback', _external=True)
     })
     data = r.json()
-    return redirect(app.config['FRONT_SERVER'] + '/deploy/do.html?token=' + data['access_token'])
+    return redirect(app.config['CALLBACK_REDIRECT'] + '?token=' + data['access_token'])
 
 
 if __name__ == '__main__':
