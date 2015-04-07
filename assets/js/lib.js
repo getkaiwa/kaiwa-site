@@ -1,5 +1,4 @@
 
-
 function getQueryStringParam(name) {
     var queryParams = window.location.search.substring(1).split('&');
     for (var i = 0; i < queryParams.length; i++) {

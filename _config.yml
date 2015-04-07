@@ -1,4 +1,5 @@
 title: Kaiwa
+exclude: ["CNAME", "Procfile", "README.md", "app", "logo.xcf"]
 url: http://getkaiwa.com
-auth_server: http://auth.getkaiwa.com
-exclude: ["CNAME", "Procfile", "README.md", "oauth.py", "oauth_settings.cfg", "oauth_settings.cfg.example", "requirements.txt", "logo.xcf"]
+app_url: https://app.getkaiwa.com
+stripe_key: pk_live_IpzB8Ej6egh7JgIh6bpIq3qZ

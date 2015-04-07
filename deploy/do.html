@@ -5,6 +5,7 @@ assets:
   css:
     - /assets/css/deploy.css
   js:
+    - https://checkout.stripe.com/checkout.js
     - /assets/js/deploy.js
 ---
 <div id="status" class="loading">
@@ -93,8 +94,26 @@ assets:
         Enable IPv6
       </label>
     </div>
+    <hr>
+    <div class="form-control">
+      <label for="contribution">Contribute to the project:</label>
+      <input type="number" name="contribution" value="5" id="contribution"> $USD
+      <small>Powered by Stripe</small>
+      <p class="help">
+        <strong>If you do not wish to contribute, you can input 0 as the amount. 2$ minimum.</strong><br>
+        Help us make Kaiwa the best Open Source chat application!<br>
+        The charge will be under the name "Maximebf".
+      </p>
+    </div>
+    <div class="form-control">
+      <label for="email">Your email:</label>
+      <input type="text" name="email">
+      <p class="help">
+        <strong>Required if you contribute</strong>
+      </p>
+    </div>
     <div class="form-buttons">
-      <button type="submit" class="btn">Create Droplet &raquo;</button>
+      <button type="submit" class="btn" id="submitBtn">Create Droplet &raquo;</button>
     </div>
   </form>
 </div>

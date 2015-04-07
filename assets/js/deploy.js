@@ -111,6 +111,7 @@ $(function() {
     if (!className) {
       status.hide();
       main.css('visibility', 'visible');
+      $('#submitBtn')[0].disabled = false;
     } else {
       main.css('visibility', 'hidden');
       status.show().attr('class', className).find('.message').html(message);
@@ -165,13 +166,20 @@ $(function() {
     func(asyncEnd);
   });
 
-  form.submit(function(e) {
-    e.preventDefault();
-    updateStatus('loading', 'Creating droplet...');
+  var serializeForm = function(form) {
     var data = {};
     $.each(form.serializeArray(), function(i, field) {
       data[field.name] = field.value === 'TRUE' ? true : field.value.replace(/\s+/g, '');
     });
+    return data;
+  };
+
+  var createDroplet = function(data, contributed) {
+    updateStatus('loading', 'Creating droplet...' + (contributed ? '<br><strong>Thank you for contributing!</strong>' : ''));
+    setTimeout(function() {
+      document.location = '/deploy/success.html';
+    }, 2000);
+    return;
     dropletCreator.create(data, function(err, droplet) {
       if (err) return updateStatus('error', 'Failed to create the droplet');
       dropletCreator.waitForIp(droplet.id, function(err, ip) {
@@ -184,6 +192,60 @@ $(function() {
         });
       });
     });
+  };
+
+  var processPayment = function(data, cb) {
+    var handler = StripeCheckout.configure({
+      key: STRIPE_KEY,
+      image: '/assets/img/favicon.png',
+      token: function(token) {
+        updateStatus('loading', 'Processing payment...');
+        $.ajax({
+          type: "POST",
+          url: APP_URL + '/charge',
+          data: {
+            token: token.id,
+            email: data['email'],
+            amount: data['contribution']
+          },
+          success: function (res) {
+            createDroplet(data, true);
+          },
+          error: function (err) {
+            updateStatus('error', 'An error occured while processing your payment');
+          }
+        });
+      }
+    });
+    handler.open({
+      name: 'Kaiwa',
+      description: 'Contribution',
+      amount: data['contribution'] * 100,
+      email: data['email'],
+      panelLabel: "Contribute {{amount}}",
+      allowRememberMe: false
+    });
+  };
+
+  form.submit(function(e) {
+    e.preventDefault();
+    var data = serializeForm(form);
+    var next = createDroplet;
+
+    if (data['contribution'] !== '' && data['contribution'] != 0) {
+      if (data['contribution'] < 2) {
+        $('#contribution').focus();
+        return;
+      }
+      if (data['email'] === '') {
+        form.find('input[name="email"]').focus();
+        return;
+      }
+      next = processPayment;
+    }
+
+    $('#submitBtn')[0].disabled = true;
+    next(data);
   });
 
 });
