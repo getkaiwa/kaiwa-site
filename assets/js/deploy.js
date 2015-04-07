@@ -11,10 +11,10 @@ DropletCreator.prototype.generateCloudConfig = function(data) {
          "  - ldap-utils\n" +
          "runcmd:\n" +
          "  - docker pull orchardup/postgresql\n" +
-         "  - docker run -d --name postgres -p 5432:5432 -e POSTGRESQL_USER=otalk -e POSTGRESQL_PASS=" + data.adminPassword + " orchardup/postgresql\n" +
+         "  - docker run -d --name postgres -p 5432:5432 -e POSTGRESQL_USER=kaiwa -e POSTGRESQL_PASS=" + data.adminPassword + " orchardup/postgresql\n" +
          "  - docker pull nickstenning/slapd\n" +
          "  - docker run -d --name ldap -p 389:389 -e LDAP_DOMAIN=" + data.org.toLowerCase() + " -e LDAP_ORGANISATION=" + data.org + " -e LDAP_ROOTPASS=" + data.adminPassword + " nickstenning/slapd\n" +
-         "  - wget -P /root/ https://raw.githubusercontent.com/digicoop/otalk-prosody/master/users.ldif\n" +
+         "  - wget -P /root/ https://raw.githubusercontent.com/digicoop/kaiwa-server/master/users.ldif\n" +
          "  - sed 's/admin@example.com/admin@" + data.domain + "/' -i /root/users.ldif\n" +
          "  - sed 's/user1@example.com/" + data.firstUserName.toLowerCase() + "@" + data.domain + "/' -i /root/users.ldif\n" +
          "  - sed 's/adminpass/" + data.adminPassword + "/' -i /root/users.ldif\n" +
@@ -22,17 +22,17 @@ DropletCreator.prototype.generateCloudConfig = function(data) {
          "  - sed 's/example.com/" + data.org.toLowerCase() + "/' -i /root/users.ldif\n" +
          "  - sed 's/ExampleDesc/" + data.org + "/' -i /root/users.ldif\n" +
          "  - sed 's/user1/" + data.firstUserName.toLowerCase() + "/' -i /root/users.ldif\n" +
-         "  - docker pull sebu77/otalk-prosody\n" +
-         "  - docker run -d -p 5222:5222 -p 5269:5269 -p 5280:5280 -p 5281:5281 -p 3478:3478/udp --name prosody --link postgres:postgres --link ldap:ldap -e XMPP_DOMAIN=" + data.domain + " -e DB_NAME=otalk -e DB_USER=otalk -e DB_PWD=" + data.adminPassword + " -e LDAP_BASE=dc=" + data.org.toLowerCase() + " -e LDAP_DN=cn=admin,dc=" + data.org.toLowerCase() + " -e LDAP_PWD=" + data.adminPassword + " -e LDAP_GROUP=" + data.org.toLowerCase() + " sebu77/otalk-prosody\n" +
+         "  - docker pull sebu77/kaiwa-server\n" +
+         "  - docker run -d -p 5222:5222 -p 5269:5269 -p 5280:5280 -p 5281:5281 -p 3478:3478/udp --name prosody --link postgres:postgres --link ldap:ldap -e XMPP_DOMAIN=" + data.domain + " -e DB_NAME=kaiwa -e DB_USER=kaiwa -e DB_PWD=" + data.adminPassword + " -e LDAP_BASE=dc=" + data.org.toLowerCase() + " -e LDAP_DN=cn=admin,dc=" + data.org.toLowerCase() + " -e LDAP_PWD=" + data.adminPassword + " -e LDAP_GROUP=" + data.org.toLowerCase() + " sebu77/kaiwa-server\n" +
          "  - ldapadd -h localhost -x -D cn=admin,dc=" + data.org.toLowerCase() + " -w " + data.adminPassword + " -f /root/users.ldif\n" +
-         "  - docker pull sebu77/otalk\n" +
-         "  - docker run -d -p 80:8000 --name otalk --link ldap:ldap -e VIRTUAL_HOST=localhost -e VIRTUAL_PORT=80 -e XMPP_NAME=" + data.org + " -e XMPP_DOMAIN=" + data.domain + " -e XMPP_WSS=ws://" + data.domain + ":5280/xmpp-websocket -e XMPP_MUC=chat." + data.domain + " -e XMPP_STARTUP=groupchat/home%40chat." + data.domain + " -e XMPP_ADMIN=admin -e LDAP_BASE=dc=" + data.org.toLowerCase() + " -e LDAP_DN=cn=admin,dc=" + data.org.toLowerCase() + " -e LDAP_PWD=" + data.adminPassword + " -e LDAP_GROUP=" + data.org.toLowerCase() + " sebu77/otalk";
+         "  - docker pull sebu77/kaiwa\n" +
+         "  - docker run -d -p 80:8000 --name kaiwa --link ldap:ldap -e VIRTUAL_HOST=localhost -e VIRTUAL_PORT=80 -e XMPP_NAME=" + data.org + " -e XMPP_DOMAIN=" + data.domain + " -e XMPP_WSS=ws://" + data.domain + ":5280/xmpp-websocket -e XMPP_MUC=chat." + data.domain + " -e XMPP_STARTUP=groupchat/home%40chat." + data.domain + " -e XMPP_ADMIN=admin -e LDAP_BASE=dc=" + data.org.toLowerCase() + " -e LDAP_DN=cn=admin,dc=" + data.org.toLowerCase() + " -e LDAP_PWD=" + data.adminPassword + " -e LDAP_GROUP=" + data.org.toLowerCase() + " sebu77/kaiwa";
 };
 
 DropletCreator.prototype.create = function(data, callback) {
   var self = this;
   var payload = {
-    name: "otalk",
+    name: "kaiwa",
     region: data.region,
     size: data.size,
     image: "ubuntu-14-04-x64",
