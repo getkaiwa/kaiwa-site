@@ -74,8 +74,8 @@ clear: both;
 #header {
   text-align: center;
   background: #6B79A8;
-  color: #fff;
-  padding-top: 40px;
+  color: #000;
+  padding-top: 30px;
   padding-bottom: 30px;
 }
   #header .brand {
@@ -91,11 +91,6 @@ clear: both;
     font-size: 30px;
     font-weight: bold;
     display: block;
-  }
-  #header img {
-    max-width: 100%;
-    box-shadow: 0 0 10px rgba(0, 0, 0, .4);
-    margin-bottom: 20px;
   }
 
 #content {

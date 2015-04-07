@@ -17,8 +17,13 @@
   color: #333;
 }
   #header .subtitle {
-    color: #fff;
+    color: #000;
     margin-bottom: 30px;
+  }
+  #header .screenshot {
+    max-width: 100%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .4);
+    margin-bottom: 20px;
   }
   #header .intro p {
     max-width: 600px;
