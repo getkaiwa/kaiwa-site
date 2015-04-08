@@ -176,10 +176,6 @@ $(function() {
 
   var createDroplet = function(data, contributed) {
     updateStatus('loading', 'Creating droplet...' + (contributed ? '<br><strong>Thank you for contributing!</strong>' : ''));
-    setTimeout(function() {
-      document.location = '/deploy/success.html';
-    }, 2000);
-    return;
     dropletCreator.create(data, function(err, droplet) {
       if (err) return updateStatus('error', 'Failed to create the droplet');
       dropletCreator.waitForIp(droplet.id, function(err, ip) {

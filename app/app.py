@@ -21,7 +21,7 @@ def index():
 def start():
     qs = urllib.urlencode({
         'client_id': app.config['DO_CLIENT_ID'],
-        'redirect_uri': url_for('callback', _external=True),
+        'redirect_uri': url_for('callback', _external=True, _scheme='https'),
         'response_type': 'code',
         'scope': 'read write'
     })
