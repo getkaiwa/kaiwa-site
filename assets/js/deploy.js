@@ -21,6 +21,7 @@ DropletCreator.prototype.generateCloudConfig = function(data) {
          "  - sed 's/user1pass/" + data.firstUserPassword + "/' -i /root/users.ldif\n" +
          "  - sed 's/example.com/" + data.org.toLowerCase() + "/' -i /root/users.ldif\n" +
          "  - sed 's/ExampleDesc/" + data.org + "/' -i /root/users.ldif\n" +
+         "  - sed 's/exampleGroup/" + data.org.toLowerCase() + "/' -i /root/users.ldif\n" +
          "  - sed 's/user1/" + data.firstUserName.toLowerCase() + "/' -i /root/users.ldif\n" +
          "  - docker pull sebu77/kaiwa-server\n" +
          "  - docker run -d -p 5222:5222 -p 5269:5269 -p 5280:5280 -p 5281:5281 -p 3478:3478/udp --name prosody --link postgres:postgres --link ldap:ldap -e XMPP_DOMAIN=" + data.domain + " -e DB_NAME=kaiwa -e DB_USER=kaiwa -e DB_PWD=" + data.adminPassword + " -e LDAP_BASE=dc=" + data.org.toLowerCase() + " -e LDAP_DN=cn=admin,dc=" + data.org.toLowerCase() + " -e LDAP_PWD=" + data.adminPassword + " -e LDAP_GROUP=" + data.org.toLowerCase() + " sebu77/kaiwa-server\n" +
