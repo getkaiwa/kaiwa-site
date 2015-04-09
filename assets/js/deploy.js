@@ -11,7 +11,7 @@ DropletCreator.prototype.generateCloudConfig = function(data) {
          "  - ldap-utils\n" +
          "runcmd:\n" +
          "  - docker pull orchardup/postgresql\n" +
-         "  - docker run -d --name postgres -p 5432:5432 -e POSTGRESQL_USER=kaiwa -e POSTGRESQL_PASS=" + data.adminPassword + " orchardup/postgresql\n" +
+         "  - docker run -d --name postgres -p 5432:5432 -e POSTGRESQL_DB=kaiwa -e POSTGRESQL_USER=kaiwa -e POSTGRESQL_PASS=" + data.adminPassword + " orchardup/postgresql\n" +
          "  - docker pull nickstenning/slapd\n" +
          "  - docker run -d --name ldap -p 389:389 -e LDAP_DOMAIN=" + data.org.toLowerCase() + " -e LDAP_ORGANISATION=" + data.org + " -e LDAP_ROOTPASS=" + data.adminPassword + " nickstenning/slapd\n" +
          "  - wget -P /root/ https://raw.githubusercontent.com/digicoop/kaiwa-server/master/users.ldif\n" +
